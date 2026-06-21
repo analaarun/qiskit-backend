@@ -190,7 +190,15 @@ class QuantumSession:
             }
             # Include parameters if gate has them (e.g., rotation angles)
             if instruction.operation.params:
-                gate_info['params'] = [float(p) for p in instruction.operation.params]
+                params = []
+                for p in instruction.operation.params:
+                    # Skip non-numeric parameters (e.g., QuantumCircuit objects in if_test)
+                    try:
+                        params.append(float(p))
+                    except (TypeError, ValueError):
+                        # Parameter is not a number (e.g., nested circuit in if_test)
+                        params.append(str(type(p).__name__))
+                gate_info['params'] = params
             operations.append(gate_info)
 
         return {
