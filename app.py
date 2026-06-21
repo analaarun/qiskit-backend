@@ -87,8 +87,10 @@ class QuantumSession:
         sys.stderr = stderr_capture
 
         try:
-            # Execute the line in the persistent namespace
-            exec(line_code, self.namespace)
+            # Compile and execute the code
+            # Use compile() to properly handle multi-line blocks (with, if, for, while)
+            compiled_code = compile(line_code, '<string>', 'exec')
+            exec(compiled_code, self.namespace)
 
             # Update reference to quantum circuit if it exists
             self._update_circuit_reference()
